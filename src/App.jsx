@@ -7,6 +7,7 @@ import Header from "./page/Header";
 import ServicePage from "./page/ServicePage";
 
 import ReviewRight from "./page/Review/ReviewRightPage";
+import MainReviewPages from "./page/Review/MainReviewPages";
 function App() {
   return (
     <BrowserRouter>
@@ -14,6 +15,7 @@ function App() {
         <Route path="/" element={<MainHN />} />
         <Route path="/food" element={<FoodHN />} />
         <Route path="/service" element={<ServiceHN />} />
+        <Route path="/review/" element={<FullReviewHN />} />
         <Route path="/review/:id" element={<ReviewHN />} />
       </Routes>
     </BrowserRouter>
@@ -32,6 +34,14 @@ const ReviewHN = () => (
     <ReviewRight />
   </div>
 );
+
+const FullReviewHN = () => (
+  <div>
+    <Header />
+    <MainReviewPages />
+  </div>
+);
+
 const FoodHN = () => (
   <div>
     <Header />
