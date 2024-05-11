@@ -8,8 +8,8 @@ function ReviewItem({ review }) {
   return (
     <ReviewItemContainer>
       <Username>{username}</Username>
-      <Content>{content}</Content>
-      <Date>{date}</Date>
+      <Content>{review_contents}</Content>
+      <Date>{review_date}</Date>
       <HashTagsContainer>
         <HashTag>#{hashtag}</HashTag>
       </HashTagsContainer>
