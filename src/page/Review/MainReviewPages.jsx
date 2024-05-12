@@ -9,6 +9,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import { faStar } from "@fortawesome/free-regular-svg-icons";
 import { useEffect } from "react";
+import RestaurantCard from "../../components/Review/ㅇ";
 
 const images = [
   "../../images/food1.png",
@@ -123,35 +124,15 @@ function MainReviewPages() {
           </TagsContainer>
 
           <ReviewCardContainer>
-            <CardWrapper
-              onMouseEnter={handleCardHover}
-              onMouseLeave={handleCardLeave}
-            >
-              {showCardInfo && (
-                <CardInfoBox>
-                  <ReviewCount>리뷰 {cardInfo.reviewCount}개</ReviewCount>
-                  <ViewCount>조회 {cardInfo.viewCount}회</ViewCount>
-                  <Rating>
-                    {" "}
-                    <FontAwesomeIcon
-                      icon={solidStar}
-                      flip="horizontal"
-                      size="2x"
-                      style={{ color: "#FFD43B" }}
-                    />{" "}
-                    2.5{" "}
-                  </Rating>
-                </CardInfoBox>
-              )}
-
-              <CardTitle showInfo={showCardInfo}>
-                {showCardInfo ? "클릭하여 리뷰보기" : `${restaurants}`}
-              </CardTitle>
-              <CardHashTag showInfo={showCardInfo}>
-                {showCardInfo ? "" : choiceTag}
-              </CardHashTag>
-              <CardImg backgroundImage={images[0]} />
-            </CardWrapper>
+            <RestaurantCard
+              handleCardHover={handleCardHover}
+              handleCardLeave={handleCardLeave}
+              showCardInfo={showCardInfo}
+              cardInfo={cardInfo}
+              restaurants={restaurants}
+              choiceTag={choiceTag}
+              images={images}
+            />
           </ReviewCardContainer>
         </DeviceFrameset>
       </ReviewPageWrapper>
