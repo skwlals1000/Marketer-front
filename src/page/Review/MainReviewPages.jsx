@@ -8,26 +8,45 @@ import { faStar as solidStar } from "@fortawesome/free-solid-svg-icons";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import { faStar } from "@fortawesome/free-regular-svg-icons";
+import { useEffect } from "react";
 
 const images = [
   "../../images/food1.png",
   // 추가 이미지 주소를 여기에 추가할 수 있습니다
 ];
 
-const tagsData = {
-  한식: ["#김치찌개", "#비빔밥", "#불고기", "#된장찌개"],
-  일식: ["#초밥", "#라멘", "#돈부리", "#우동"],
-  중식: ["#짜장면", "#탕수육", "#마파두부", "#양장피"],
-};
-
 function MainReviewPages() {
+  const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [restaurants, setRestaurants] = useState(null);
+  const [tags, setTags] = useState([]);
   const [cardInfo, setCardInfo] = useState({
     reviewCount: 123,
     viewCount: 456,
     rating: 4.5,
   });
+
   const [showCardInfo, setShowCardInfo] = useState(false);
+  const [choiceTag, setChoiceTag] = useState(null);
+
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:3000/api/v1/restaurants`
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch reviews");
+        }
+
+        const data = await response.json();
+        setCategories(data.data.map((el) => el.category));
+      } catch (error) {
+        console.error("Error fetching reviews:", error);
+      }
+    };
+    fetchReviews();
+  }, []);
 
   const handleCardHover = () => {
     setShowCardInfo(true);
@@ -37,8 +56,38 @@ function MainReviewPages() {
     setShowCardInfo(false);
   };
 
-  const handleCategorySelect = (category) => {
+  const handleCategorySelect = async (category) => {
     setSelectedCategory(category);
+    try {
+      const response = await fetch(
+        `http://localhost:3000/api/v1/restaurants?category=${category}`
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch restaurant data");
+      }
+      const data = await response.json();
+      if (data.resultCode === "S-1") {
+        // 선택한 카테고리에 해당하는 음식 메뉴 설정
+        const selectedRestaurant = data.data.find(
+          (el) => el.category === category
+        );
+        if (selectedRestaurant) {
+          setTags(Object.values(selectedRestaurant.food_menu));
+          setRestaurants(selectedRestaurant.restaurants_name);
+        } else {
+          setTags([]); // 선택한 카테고리에 해당하는 음식 메뉴가 없는 경우 빈 배열 설정
+        }
+      } else {
+        throw new Error(data.msg);
+      }
+    } catch (error) {
+      console.error("Error fetching restaurant data:", error);
+    }
+    setChoiceTag(null); // 선택한 음식 태그 초기화
+  };
+
+  const handleTagSelect = (tag) => {
+    setChoiceTag(tag);
   };
 
   return (
@@ -55,7 +104,7 @@ function MainReviewPages() {
           height="75%"
         >
           <CategoryContainer>
-            {Object.keys(tagsData).map((category, index) => (
+            {categories.map((category, index) => (
               <CategoryButton
                 key={index}
                 onClick={() => handleCategorySelect(category)}
@@ -66,10 +115,11 @@ function MainReviewPages() {
             ))}
           </CategoryContainer>
           <TagsContainer>
-            {selectedCategory &&
-              tagsData[selectedCategory].map((tag, index) => (
-                <TagButton key={index}>{tag}</TagButton>
-              ))}
+            {tags.map((tag, index) => (
+              <TagButton key={index} onClick={() => handleTagSelect(tag)}>
+                {tag}
+              </TagButton>
+            ))}
           </TagsContainer>
 
           <ReviewCardContainer>
@@ -95,22 +145,11 @@ function MainReviewPages() {
               )}
 
               <CardTitle showInfo={showCardInfo}>
-                {showCardInfo ? "클릭하여 리뷰보기" : "식당 이름"}
+                {showCardInfo ? "클릭하여 리뷰보기" : `${restaurants}`}
               </CardTitle>
               <CardHashTag showInfo={showCardInfo}>
-                {showCardInfo ? "" : "# 브런치"}
+                {showCardInfo ? "" : choiceTag}
               </CardHashTag>
-              <CardImg backgroundImage={images[0]} />
-            </CardWrapper>
-
-            <CardWrapper>
-              <h2>식당 이름</h2>
-              <div># 브런치</div>
-              <CardImg backgroundImage={images[0]} />
-            </CardWrapper>
-            <CardWrapper>
-              <h2>식당 이름</h2>
-              <div># 브런치</div>
               <CardImg backgroundImage={images[0]} />
             </CardWrapper>
           </ReviewCardContainer>

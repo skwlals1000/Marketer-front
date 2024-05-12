@@ -57,13 +57,13 @@ function ReviewPage() {
 
   const lastId = useRef(4);
 
-  const onSubmit = (username, content, date, hashtags) => {
+  const onSubmit = (username, content, hashtags, rating) => {
     const updateReviews = reviews.concat({
       id: lastId.current,
       username,
       content,
-      date,
       hashtags,
+      rating,
     });
 
     setReviews(updateReviews);
