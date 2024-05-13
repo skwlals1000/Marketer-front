@@ -6,8 +6,9 @@ import Home from "../src/page/Map/Home";
 import Header from "./page/Header";
 import ServicePage from "./page/ServicePage";
 
-import ReviewRight from "./page/Review/ReviewRightPage";
 import MainReviewPages from "./page/Review/MainReviewPages";
+import CategoryReviewPage from "./page/Review/CategoryReivewPage";
+import ReviewPage from "./page/Review/ReviewPage";
 function App() {
   return (
     <BrowserRouter>
@@ -17,6 +18,7 @@ function App() {
         <Route path="/service" element={<ServiceHN />} />
         <Route path="/review/" element={<FullReviewHN />} />
         <Route path="/review/:id" element={<ReviewHN />} />
+        <Route path="/category/:category" element={<CategoryReviewHN />} />"
       </Routes>
     </BrowserRouter>
   );
@@ -31,7 +33,7 @@ const MainHN = () => (
 const ReviewHN = () => (
   <div>
     <Header />
-    <ReviewRight />
+    <ReviewPage />
   </div>
 );
 
@@ -57,4 +59,10 @@ const ServiceHN = () => (
   </div>
 );
 
+const CategoryReviewHN = () => (
+  <div>
+    <Header />
+    <CategoryReviewPage />
+  </div>
+);
 export default App;

@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import styled from "styled-components";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { Carousel } from "react-responsive-carousel";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import RatingStars from "../../components/Review/RatingStars";
 import { useState, useRef } from "react";
 import ReviewList from "../../components/Review/ReviewList";
@@ -20,6 +20,7 @@ import { useLocation } from "react-router-dom";
 function ReviewPage() {
   const location = useLocation();
   const restranutInfo = { ...location.state };
+  const { id } = useParams();
 
   const [showReviewList, setShowReviewList] = useState(true);
   const [showWriteReview, setShowWriteReview] = useState(false);
