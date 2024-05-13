@@ -69,7 +69,7 @@ function ReviewListPage() {
         throw new Error("Network response was not ok."); // 응답 실패 처리
       })
       .then((data) => {
-        console.log(data.data.map((el) => el.image)); // 받은 데이터를 콘솔에 로그로 출력
+        console.log(data.data.map((el) => el)); // 받은 데이터를 콘솔에 로그로 출력
         setRestaurants(data.data);
 
         // Pass menu items to the next page
@@ -78,6 +78,7 @@ function ReviewListPage() {
             restaurants: data.data.map((el) => ({
               id: el.restaurants_id,
               name: el.restaurants_name,
+              phone: el.phone,
               opening_hours: el.opening_hours,
               rating: el.rating,
               category: el.category,
