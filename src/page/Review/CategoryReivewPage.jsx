@@ -2,13 +2,16 @@ import { useState, useEffect } from "react";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { DeviceFrameset } from "react-device-frameset";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import ReviewCard from "../../components/Review/ReviewCard";
 
 function CategoryReviewPage() {
   const location = useLocation();
-  const { restaurants } = location.state;
+
+  const { restaurants } = location.state || { restaurants: [] };
+  console.log(restaurants);
+
   const [isLoading, setIsLoading] = useState(false);
   const [isPressed, setIsPressed] = useState(false);
 
@@ -51,43 +54,6 @@ function CategoryReviewPage() {
     }
   }, [location.state]);
 
-  const handleCategorySelect = (category) => {
-    setSelectedCategory(category);
-    // 서버에 해당 카테고리의 데이터를 요청
-    fetch(`http://localhost:3000/api/v1/restaurants/category/${category}`)
-      .then((response) => {
-        if (response.ok) {
-          return response.json(); // 응답이 성공적이면 JSON 형태로 변환
-        }
-        throw new Error("Network response was not ok."); // 응답 실패 처리
-      })
-      .then((data) => {
-        console.log(data.data.map((el) => el.image)); // 받은 데이터를 콘솔에 로그로 출력
-        setRestaurants(data.data);
-
-        // Pass menu items to the next page
-        navigate(`/category/${category}`, {
-          state: {
-            restaurants: data.data.map((el) => ({
-              id: el.restaurants_id,
-              name: el.restaurants_name,
-              opening_hours: el.opening_hours,
-              rating: el.rating,
-              category: el.category,
-              image: el.image,
-              menus: el.food_menu.menus.map((menu) => menu.name),
-            })),
-          },
-        });
-      })
-      .catch((error) => {
-        console.error(
-          "There has been a problem with your fetch operation:",
-          error
-        );
-        // 에러 처리 로직
-      });
-  };
   return (
     <ReveiwP>
       <ReviewPageWrapper>

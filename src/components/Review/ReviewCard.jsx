@@ -2,15 +2,15 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar as solidStar } from "@fortawesome/free-solid-svg-icons";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const CardWrapper = styled.div`
-  width: 200px;
+  width: 250px;
   height: 250px;
   padding: 20px;
   border-radius: 20px;
   box-shadow: rgba(0, 0, 0, 0.15) 0px 3px 3px 0px;
-
+  flex: 1;
   margin: 0 10px; /* 좌우 여백 추가 */
   display: flex;
   align-items: flex-start;
@@ -84,7 +84,7 @@ const CardImg = styled.div`
 const CardTitle = styled.h2`
   margin-bottom: 10px;
   color: black;
-  font-size: ${({ showInfo }) => (showInfo ? "32px" : "32px")};
+  font-size: ${({ showInfo }) => (showInfo ? "24px" : "32px")};
   font-family: "Uiyeun", sans-serif;
 `;
 
@@ -95,7 +95,9 @@ const CardHashTag = styled.div`
 `;
 
 const ReviewCard = ({ restaurant }) => {
-  const { id, name, image, rating } = restaurant;
+  const { id, name, image, rating, opening_hours, phone, address } = restaurant;
+
+  const navigate = useNavigate();
 
   const [showCardInfo, setShowCardInfo] = useState(false);
   const [cardInfo, setCardInfo] = useState({
@@ -104,15 +106,24 @@ const ReviewCard = ({ restaurant }) => {
     rating: 0,
   });
 
-  // 클릭 시 이동할 경로 설정
-  const to = `/restaurant/${id}`;
+  const handleDetailPost = (restaurant) => {
+    console.log(restaurant);
+    navigate(`/review/${id}`, {
+      state: {
+        id: `${id}`,
+        name: `${name}`,
+        opening_hours: `${opening_hours}`,
+        rating: `${rating}`,
+        image: `${image}`,
+        phone: `${phone}`,
+        address: `${address}`,
+      },
+    });
+  };
 
   return (
     <CardWrapper
-      to={{
-        pathname: to,
-        state: { restaurant }, // 전달할 데이터 설정
-      }}
+      onClick={() => handleDetailPost({ restaurant })}
       onMouseEnter={() => setShowCardInfo(true)}
       onMouseLeave={() => setShowCardInfo(false)}
     >
