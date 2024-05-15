@@ -1,17 +1,29 @@
 import { useState, useEffect } from "react";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+<<<<<<< HEAD
 import { DeviceFrameset } from "react-device-frameset";
+=======
+>>>>>>> ecb690fe1c0bf69ea557ee2958b755127fc1ddfa
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import ReviewCard from "../../components/Review/ReviewCard";
+import { DeviceFrameset } from "react-device-frameset";
 
 function CategoryReviewPage() {
   const location = useLocation();
+<<<<<<< HEAD
 
   const { restaurants } = location.state || { restaurants: [] };
   console.log(restaurants);
 
+=======
+  const navigate = useNavigate();
+
+  const { restaurants } = location.state || { restaurants: [] };
+
+  console.log(restaurants[0]);
+>>>>>>> ecb690fe1c0bf69ea557ee2958b755127fc1ddfa
   const [isLoading, setIsLoading] = useState(false);
   const [isPressed, setIsPressed] = useState(false);
 
@@ -21,15 +33,16 @@ function CategoryReviewPage() {
       setIsPressed(false);
     }, 100);
   };
+
   const handleScroll = () => {
     const scrollTop = document.documentElement.scrollTop;
     const scrollHeight = document.documentElement.scrollHeight;
     const clientHeight = document.documentElement.clientHeight;
 
     if (scrollTop + clientHeight >= scrollHeight - 100 && !isLoading) {
-      // 스크롤이 하단에 도달했을 때 추가 데이터를 불러옵니다.
       setIsLoading(true);
-      // 여기에서 추가 데이터를 불러오는 함수 호출
+      // 추가 데이터를 불러오는 함수 호출
+      // 예: fetchAdditionalData();
     }
   };
 
@@ -55,56 +68,48 @@ function CategoryReviewPage() {
   }, [location.state]);
 
   return (
-    <ReveiwP>
-      <ReviewPageWrapper>
-        <DeviceFrameset
-          device="iPad Mini"
-          color="black"
-          width="93%"
-          height="75%"
-        >
-          <Header>
-            <Link to="/review/">
-              <PressableIcon
-                icon={faArrowLeft}
-                size="3x"
-                onClick={handleIconClick}
-                pressed={isPressed}
-              />
-            </Link>
-            <Title>리뷰 목록</Title>
-          </Header>
-          <Input />
-          <TagsContainer>
-            {restaurants.map((restaurant, index) => (
-              <div key={index}>
-                {restaurant.menus &&
-                  restaurant.menus.length > 0 &&
-                  restaurant.menus.map((menu, menuIndex) => (
-                    <TagButton key={menuIndex}>{menu}</TagButton>
-                  ))}
-              </div>
-            ))}
-          </TagsContainer>
-          <ReviewCardContainer>
-            <div>
-              {restaurants.map((restaurant, index) => (
-                <ReviewCard restaurant={restaurant} />
-              ))}
+    <ReviewPageWrapper>
+      <DeviceFrameset device="iPad Mini" color="black" width="93%" height="75%">
+        <Header>
+          <Link to="/review/">
+            <PressableIcon
+              icon={faArrowLeft}
+              size="3x"
+              onClick={handleIconClick}
+              pressed={isPressed}
+            />
+          </Link>
+          <Title>리뷰 목록</Title>
+        </Header>
+        <Input />
+        <TagsContainer>
+          {restaurants.map((restaurant, index) => (
+            <div key={index}>
+              {restaurant.menus &&
+                restaurant.menus.length > 0 &&
+                restaurant.menus.map((menu, menuIndex) => (
+                  <TagButton key={menuIndex}>{menu}</TagButton>
+                ))}
             </div>
-            {isLoading && <div>Loading...</div>}
-          </ReviewCardContainer>
-        </DeviceFrameset>
-      </ReviewPageWrapper>
-    </ReveiwP>
+          ))}
+        </TagsContainer>
+        <ReviewCardContainer>
+          <div>
+            {restaurants.map((restaurant, index) => (
+              <ReviewCard
+                key={index} // 고유한 식별자를 key로 사용
+                restaurant={restaurant}
+              />
+            ))}
+          </div>
+          {isLoading && <div>Loading...</div>}
+        </ReviewCardContainer>
+      </DeviceFrameset>
+    </ReviewPageWrapper>
   );
 }
 
 export default CategoryReviewPage;
-
-const ReveiwP = styled.div`
-  background: linear-gradient(#f0f0c3, #e7e7c9);
-`;
 
 const ReviewPageWrapper = styled.div`
   max-width: 800px;
@@ -137,22 +142,21 @@ const TagsContainer = styled.div`
   max-width: 100%;
   height: auto;
   margin: 0 auto;
-  white-space: nowrap; /* 자식 요소들을 가로로 나열 */
+  white-space: nowrap;
   display: flex;
-  overflow-x: auto; /* 가로 스크롤 활성화 */
+  overflow-x: auto;
 
-  /* 스크롤바 스타일 */
-  scrollbar-width: thin; /* Firefox */
-  scrollbar-color: rgba(0, 0, 0, 0.2) rgba(0, 0, 0, 0.1); /* Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) rgba(0, 0, 0, 0.1);
   &::-webkit-scrollbar {
-    width: 6px; /* Chrome, Safari, Edge */
+    width: 6px;
   }
   &::-webkit-scrollbar-thumb {
-    background-color: rgba(0, 0, 0, 0.2); /* 스크롤바 색상 */
-    border-radius: 3px; /* 스크롤바 모양 */
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
   }
   &::-webkit-scrollbar-track {
-    background-color: rgba(0, 0, 0, 0.1); /* 스크롤바 트랙 색상 */
+    background-color: rgba(0, 0, 0, 0.1);
   }
 `;
 

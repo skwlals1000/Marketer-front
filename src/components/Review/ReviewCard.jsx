@@ -95,7 +95,11 @@ const CardHashTag = styled.div`
 `;
 
 const ReviewCard = ({ restaurant }) => {
+<<<<<<< HEAD
   const { id, name, image, rating, opening_hours, phone, address } = restaurant;
+=======
+  const { id, name, image, rating, opening_hours } = restaurant;
+>>>>>>> ecb690fe1c0bf69ea557ee2958b755127fc1ddfa
 
   const navigate = useNavigate();
 
