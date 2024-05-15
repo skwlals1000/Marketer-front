@@ -1,29 +1,17 @@
 import { useState, useEffect } from "react";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-<<<<<<< HEAD
 import { DeviceFrameset } from "react-device-frameset";
-=======
->>>>>>> ecb690fe1c0bf69ea557ee2958b755127fc1ddfa
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import ReviewCard from "../../components/Review/ReviewCard";
-import { DeviceFrameset } from "react-device-frameset";
 
 function CategoryReviewPage() {
   const location = useLocation();
-<<<<<<< HEAD
 
   const { restaurants } = location.state || { restaurants: [] };
   console.log(restaurants);
 
-=======
-  const navigate = useNavigate();
-
-  const { restaurants } = location.state || { restaurants: [] };
-
-  console.log(restaurants[0]);
->>>>>>> ecb690fe1c0bf69ea557ee2958b755127fc1ddfa
   const [isLoading, setIsLoading] = useState(false);
   const [isPressed, setIsPressed] = useState(false);
 
