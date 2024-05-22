@@ -4,15 +4,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faThumbsUp, faComment } from '@fortawesome/free-solid-svg-icons';
 
 const Community = () => {
-  const [recipePosts, setRecipePosts] = useState([
-    { id: 1, content: "첫번째 레시피", title: "첫번째", author: "나지민" },
-  ]);
-  const [mealPosts, setMealPosts] = useState([
-    { id: 1, content: "첫번째 식사", title: "첫번째", author: "백민기" },
-  ]);
-  const [restaurantPosts, setRestaurantPosts] = useState([
-    { id: 1, content: "첫번째 맛집 정보", title: "첫번째", author: "김동욱" },
-  ]);
+  const [posts, setPosts] = useState({
+    recipe: [{ id: 1, content: "첫번째 레시피", title: "첫번째", author: "나지민", likes: 0 }],
+    meal: [{ id: 1, content: "첫번째 식사", title: "첫번째", author: "백민기", likes: 0 }],
+    restaurant: [{ id: 1, content: "첫번째 맛집 정보", title: "첫번째", author: "김동욱", likes: 0 }],
+    free: [{ id: 1, content: "첫번째 자유글", title: "첫번째", author: "이영희", likes: 0 }],
+    popular: []
+  });
   const [newPost, setNewPost] = useState("");
   const [newTitle, setNewTitle] = useState("");
   const [username, setUsername] = useState("나지민 #맵찔이");
@@ -24,48 +22,41 @@ const Community = () => {
   const createPost = (e) => {
     e.preventDefault();
     const newPostData = {
-      id: currentBoardPosts().length + 1,
+      id: posts[currentBoard].length + 1,
       title: newTitle,
       content: newPost,
       author: username,
+      likes: 0
     };
 
-    if (currentBoard === "recipe") {
-      setRecipePosts([...recipePosts, newPostData]);
-    } else if (currentBoard === "meal") {
-      setMealPosts([...mealPosts, newPostData]);
-    } else if (currentBoard === "restaurant") {
-      setRestaurantPosts([...restaurantPosts, newPostData]);
+    setPosts({
+      ...posts,
+      [currentBoard]: [...posts[currentBoard], newPostData],
+    });
+
+    setNewPost("");
+    setNewTitle("");
+  };
+
+  const handleLike = (post) => {
+    const updatedPosts = posts[currentBoard].map(p => 
+      p.id === post.id ? { ...p, likes: p.likes + 1 } : p
+    );
+
+    let updatedPopular = posts.popular;
+
+    if (post.likes + 1 >= 10 && !posts.popular.find(p => p.id === post.id)) {
+      updatedPopular = [...posts.popular, { ...post, likes: post.likes + 1 }];
     }
 
-    setNewPost(""); // Clear input field
-    setNewTitle(""); // Clear title field
+    setPosts({
+      ...posts,
+      [currentBoard]: updatedPosts,
+      popular: updatedPopular
+    });
   };
 
-  const handleSearch = (e) => {
-    setSearchTerm(e.target.value);
-  };
-
-  const handleFilterChange = (e) => {
-    setSearchFilter(e.target.value);
-  };
-
-  const handleBoardChange = (board) => {
-    setCurrentBoard(board);
-  };
-
-  const currentBoardPosts = () => {
-    if (currentBoard === "recipe") {
-      return recipePosts;
-    } else if (currentBoard === "meal") {
-      return mealPosts;
-    } else if (currentBoard === "restaurant") {
-      return restaurantPosts;
-    }
-    return [];
-  };
-
-  const filteredPosts = currentBoardPosts().filter(post => {
+  const filteredPosts = posts[currentBoard].filter(post => {
     if (searchFilter === "title") {
       return post.title.toLowerCase().includes(searchTerm.toLowerCase());
     } else if (searchFilter === "content") {
@@ -87,9 +78,9 @@ const Community = () => {
             type="text"
             placeholder="검색어를 입력하세요..."
             value={searchTerm}
-            onChange={handleSearch}
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
-          <FilterMenu value={searchFilter} onChange={handleFilterChange}>
+          <FilterMenu value={searchFilter} onChange={(e) => setSearchFilter(e.target.value)}>
             <option value="title">제목</option>
             <option value="content">내용</option>
             <option value="author">작성자</option>
@@ -98,9 +89,11 @@ const Community = () => {
         </SearchBarContainer>
       </Header>
       <NavBar>
-        <NavButton onClick={() => handleBoardChange("recipe")}>음식 레시피 공유</NavButton>
-        <NavButton onClick={() => handleBoardChange("meal")}>오늘의 식사</NavButton>
-        <NavButton onClick={() => handleBoardChange("restaurant")}>맛집 정보 공유</NavButton>
+        <NavButton onClick={() => setCurrentBoard("recipe")}>음식 레시피 공유</NavButton>
+        <NavButton onClick={() => setCurrentBoard("meal")}>오늘의 식사</NavButton>
+        <NavButton onClick={() => setCurrentBoard("restaurant")}>맛집 정보 공유</NavButton>
+        <NavButton onClick={() => setCurrentBoard("free")}>자유 게시판</NavButton>
+        <NavButton onClick={() => setCurrentBoard("popular")}>인기 게시물</NavButton>
       </NavBar>
       <MainContent>
         <Sidebar>
@@ -117,21 +110,23 @@ const Community = () => {
           </Navigation>
         </Sidebar>
         <Content>
-          <PostForm onSubmit={createPost}>
-            <PostTitleInput
-              type="text"
-              value={newTitle}
-              onChange={(e) => setNewTitle(e.target.value)}
-              placeholder="제목"
-            />
-            <PostInput
-              type="text"
-              value={newPost}
-              onChange={(e) => setNewPost(e.target.value)}
-              placeholder="글 쓰기"
-            />
-            <PostButton type="submit">글 작성</PostButton>
-          </PostForm>
+          {currentBoard !== "popular" && (
+            <PostForm onSubmit={createPost}>
+              <PostTitleInput
+                type="text"
+                value={newTitle}
+                onChange={(e) => setNewTitle(e.target.value)}
+                placeholder="제목"
+              />
+              <PostInput
+                type="text"
+                value={newPost}
+                onChange={(e) => setNewPost(e.target.value)}
+                placeholder="글 쓰기"
+              />
+              <PostButton type="submit">글 작성</PostButton>
+            </PostForm>
+          )}
           <PostList>
             {filteredPosts.map((post) => (
               <Post key={post.id}>
@@ -140,8 +135,8 @@ const Community = () => {
                 <PostFooter>
                   <PostAuthor>By {post.author}</PostAuthor>
                   <PostActions>
-                    <LikeButton>
-                      <FontAwesomeIcon icon={faThumbsUp} /> 좋아요
+                    <LikeButton onClick={() => handleLike(post)}>
+                      <FontAwesomeIcon icon={faThumbsUp} /> 좋아요 ({post.likes})
                     </LikeButton>
                     <CommentButton>
                       <FontAwesomeIcon icon={faComment} /> 댓글
@@ -328,6 +323,7 @@ const PostForm = styled.form`
   border-radius: 5px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 `;
+
 
 const PostTitleInput = styled.input`
   margin-bottom: 10px;
