@@ -47,7 +47,7 @@ const Community = () => {
       <NavBar>
         <NavButton>음식 레시피 공유</NavButton>
         <NavButton>오늘의 식사</NavButton>
-        <NavButton></NavButton>
+        
         <NavButton>맛집 정보 공유</NavButton>
       </NavBar>
       
