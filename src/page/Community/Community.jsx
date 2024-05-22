@@ -1,56 +1,107 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faThumbsUp, faComment } from '@fortawesome/free-solid-svg-icons';
 
 const Community = () => {
-  const [dummyPosts, setDummyPosts] = useState([
-    { id: 1, content: "첫번째 포스트", author: "나지민" },
-    { id: 2, content: "두번째 포스트", author: "백민기" },
-    { id: 3, content: "세번째 포스트", author: "김동욱" },
+  const [recipePosts, setRecipePosts] = useState([
+    { id: 1, content: "첫번째 레시피", title: "첫번째", author: "나지민" },
+  ]);
+  const [mealPosts, setMealPosts] = useState([
+    { id: 1, content: "첫번째 식사", title: "첫번째", author: "백민기" },
+  ]);
+  const [restaurantPosts, setRestaurantPosts] = useState([
+    { id: 1, content: "첫번째 맛집 정보", title: "첫번째", author: "김동욱" },
   ]);
   const [newPost, setNewPost] = useState("");
-  const [username, setUsername] = useState("나지민#맵찔이");
+  const [newTitle, setNewTitle] = useState("");
+  const [username, setUsername] = useState("나지민 #맵찔이");
   const [bio, setBio] = useState("안녕하세요 ");
   const [searchTerm, setSearchTerm] = useState("");
+  const [searchFilter, setSearchFilter] = useState("title");
+  const [currentBoard, setCurrentBoard] = useState("recipe");
 
   const createPost = (e) => {
     e.preventDefault();
     const newPostData = {
-      id: dummyPosts.length + 1,
+      id: currentBoardPosts().length + 1,
+      title: newTitle,
       content: newPost,
       author: username,
     };
-    setDummyPosts([...dummyPosts, newPostData]);
+
+    if (currentBoard === "recipe") {
+      setRecipePosts([...recipePosts, newPostData]);
+    } else if (currentBoard === "meal") {
+      setMealPosts([...mealPosts, newPostData]);
+    } else if (currentBoard === "restaurant") {
+      setRestaurantPosts([...restaurantPosts, newPostData]);
+    }
+
     setNewPost(""); // Clear input field
+    setNewTitle(""); // Clear title field
   };
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
   };
 
-  const filteredPosts = dummyPosts.filter(post =>
-    post.content.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const handleFilterChange = (e) => {
+    setSearchFilter(e.target.value);
+  };
+
+  const handleBoardChange = (board) => {
+    setCurrentBoard(board);
+  };
+
+  const currentBoardPosts = () => {
+    if (currentBoard === "recipe") {
+      return recipePosts;
+    } else if (currentBoard === "meal") {
+      return mealPosts;
+    } else if (currentBoard === "restaurant") {
+      return restaurantPosts;
+    }
+    return [];
+  };
+
+  const filteredPosts = currentBoardPosts().filter(post => {
+    if (searchFilter === "title") {
+      return post.title.toLowerCase().includes(searchTerm.toLowerCase());
+    } else if (searchFilter === "content") {
+      return post.content.toLowerCase().includes(searchTerm.toLowerCase());
+    } else if (searchFilter === "author") {
+      return post.author.toLowerCase().includes(searchTerm.toLowerCase());
+    } else {
+      return post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+             post.content.toLowerCase().includes(searchTerm.toLowerCase());
+    }
+  });
 
   return (
     <Container>
       <Header>
-        <h1>마시써유</h1>
+        <h1>맛있어U</h1>
         <SearchBarContainer>
-        <SearchBar
-          type="text"
-          placeholder="검색어를 입력하세요..."
-          value={searchTerm}
-          onChange={handleSearch}
-        />
-      </SearchBarContainer>
+          <SearchBar
+            type="text"
+            placeholder="검색어를 입력하세요..."
+            value={searchTerm}
+            onChange={handleSearch}
+          />
+          <FilterMenu value={searchFilter} onChange={handleFilterChange}>
+            <option value="title">제목</option>
+            <option value="content">내용</option>
+            <option value="author">작성자</option>
+            <option value="titleContent">제목과 내용</option>
+          </FilterMenu>
+        </SearchBarContainer>
       </Header>
       <NavBar>
-        <NavButton>음식 레시피 공유</NavButton>
-        <NavButton>오늘의 식사</NavButton>
-        
-        <NavButton>맛집 정보 공유</NavButton>
+        <NavButton onClick={() => handleBoardChange("recipe")}>음식 레시피 공유</NavButton>
+        <NavButton onClick={() => handleBoardChange("meal")}>오늘의 식사</NavButton>
+        <NavButton onClick={() => handleBoardChange("restaurant")}>맛집 정보 공유</NavButton>
       </NavBar>
-      
       <MainContent>
         <Sidebar>
           <UserProfile>
@@ -67,6 +118,12 @@ const Community = () => {
         </Sidebar>
         <Content>
           <PostForm onSubmit={createPost}>
+            <PostTitleInput
+              type="text"
+              value={newTitle}
+              onChange={(e) => setNewTitle(e.target.value)}
+              placeholder="제목"
+            />
             <PostInput
               type="text"
               value={newPost}
@@ -78,12 +135,17 @@ const Community = () => {
           <PostList>
             {filteredPosts.map((post) => (
               <Post key={post.id}>
+                <PostTitle>{post.title}</PostTitle>
                 <PostContent>{post.content}</PostContent>
                 <PostFooter>
                   <PostAuthor>By {post.author}</PostAuthor>
                   <PostActions>
-                    <LikeButton>좋아요</LikeButton>
-                    <CommentButton>댓글</CommentButton>
+                    <LikeButton>
+                      <FontAwesomeIcon icon={faThumbsUp} /> 좋아요
+                    </LikeButton>
+                    <CommentButton>
+                      <FontAwesomeIcon icon={faComment} /> 댓글
+                    </CommentButton>
                   </PostActions>
                 </PostFooter>
               </Post>
@@ -136,19 +198,19 @@ const NavButton = styled.button`
   &:hover {
     background-color: #285a8e;
     transform: translateY(-2px);
-
   }
 `;
 
 const SearchBarContainer = styled.div`
   display: flex;
   justify-content: center;
+  align-items: center;
   width: 100%;
   margin: 20px 0;
 `;
 
 const SearchBar = styled.input`
-  width: 60%;
+  width: 50%;
   padding: 10px 20px;
   font-size: 1rem;
   border: 1px solid #ccc;
@@ -161,6 +223,16 @@ const SearchBar = styled.input`
     outline: none;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   }
+`;
+
+const FilterMenu = styled.select`
+  margin-left: 10px;
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #ffffff;
+  cursor: pointer;
 `;
 
 const MainContent = styled.main`
@@ -249,6 +321,7 @@ const Content = styled.div`
 
 const PostForm = styled.form`
   display: flex;
+  flex-direction: column;
   margin-bottom: 20px;
   background-color: #ffffff;
   padding: 10px;
@@ -256,13 +329,20 @@ const PostForm = styled.form`
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 `;
 
-const PostInput = styled.input`
-  flex: 1;
+const PostTitleInput = styled.input`
+  margin-bottom: 10px;
   padding: 10px;
   font-size: 1rem;
   border: 1px solid #ccc;
   border-radius: 5px;
-  margin-right: 10px;
+`;
+
+const PostInput = styled.input`
+  margin-bottom: 10px;
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
 `;
 
 const PostButton = styled.button`
@@ -298,6 +378,11 @@ const Post = styled.div`
   &:hover {
     transform: translateY(-2px);
   }
+`;
+
+const PostTitle = styled.h3`
+  margin: 0 0 10px 0;
+  font-size: 1.2rem;
 `;
 
 const PostContent = styled.p`
